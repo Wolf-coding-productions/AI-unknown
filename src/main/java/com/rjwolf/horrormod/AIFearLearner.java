@@ -49,20 +49,27 @@ public class AIFearLearner {
     public FearProfile predictPlayerFears(PlayerBehaviorData data) {
         INDArray features = convertBehaviorToFeatures(data);
         INDArray output = network.output(features);
-        return new FearProfile(output);
+        return new FearProfile(output.getRow(0));
     }
 
     private INDArray convertBehaviorToFeatures(PlayerBehaviorData data) {
         // Convert player behavior data into neural network input features
         double[] features = new double[INPUT_FEATURES];
-        // Fill features array based on player behavior
-        // This includes things like:
-        // - Player movement patterns
-        // - Reaction time to different entities
-        // - Areas avoided
-        // - Time spent in different biomes
-        // - Combat behavior
-        // - etc.
-        return Nd4j.create(features);
+        
+        // Normalize and add features
+        features[0] = data.getAverageMovementSpeed() / 10.0; // Normalize by a reasonable max speed
+        features[1] = data.getFleeingInstances() / 100.0; // Normalize by a reasonable count
+        features[2] = data.getJumpFrequency() / 1000.0;
+        features[3] = data.getSneakDuration() / 10000.0;
+        features[4] = data.getCombatEngagements() / 50.0;
+
+        // Example of processing map-based data
+        features[5] = data.getBlockAvoidance().values().stream().mapToInt(Integer::intValue).sum() / 1000.0;
+        features[6] = data.getEntityReactions().values().stream().mapToInt(Integer::intValue).sum() / 1000.0;
+        features[7] = data.getBiomePreferences().values().stream().mapToInt(Integer::intValue).sum() / 10000.0;
+
+        // ... fill other features up to INPUT_FEATURES
+        
+        return Nd4j.create(features).reshape(1, -1);
     }
 }

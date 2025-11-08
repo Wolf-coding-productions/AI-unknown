@@ -54,10 +54,7 @@ public class PlayerBehaviorData {
     }
 
     private double getDistance(BlockPos pos1, BlockPos pos2) {
-        int dx = pos2.getX() - pos1.getX();
-        int dy = pos2.getY() - pos1.getY();
-        int dz = pos2.getZ() - pos1.getZ();
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+        return Math.sqrt(pos1.distSqr(pos2));
     }
 
     private void updateMovementSpeed(double speed) {
@@ -92,4 +89,15 @@ public class PlayerBehaviorData {
     public int getFleeingInstances() {
         return fleeingInstances;
     }
-}
+
+    public int getJumpFrequency() {
+        return jumpFrequency;
+    }
+
+    public int getSneakDuration() {
+        return sneakDuration;
+    }
+
+    public int getCombatEngagements() {
+        return combatEngagements;
+    }
