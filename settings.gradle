@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.namespace == 'net.minecraftforge') {
+                useModule("net.minecraftforge:forge:${requested.version}")
+            }
+        }
+    }
+}
