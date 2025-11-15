@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[43,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="horrormod"
+version="1.0.0"
+displayName="AI Horror Mod"
+description='''
+A horror mod that uses AI to learn player fears and modify the world accordingly.
+'''
+
+[[dependencies.horrormod]]
+modId="forge"
+mandatory=true
+versionRange="[43,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.horrormod]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.19.2,1.20)"
+ordering="NONE"
+side="BOTH"

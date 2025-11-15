@@ -13,7 +13,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 public class AIFearLearner {
     private MultiLayerNetwork network;
-    private static final int INPUT_FEATURES = 50; // Number of behavioral features we track
+    private static final int INPUT_FEATURES = PlayerBehaviorData.FEATURE_COUNT; // Number of behavioral features we track
     private static final int FEAR_CATEGORIES = 10; // Different types of fears we can identify
 
     public void initialize() {
@@ -43,7 +43,22 @@ public class AIFearLearner {
 
     public void learnFromPlayerBehavior(PlayerBehaviorData data) {
         INDArray features = convertBehaviorToFeatures(data);
-        network.fit(features, data.getFearLabel());
+        INDArray labels;
+        if (data.getFearLabel() != null) {
+            double[] raw = data.getFearLabel();
+            // Ensure correct length
+            if (raw.length != FEAR_CATEGORIES) {
+                double[] resized = new double[FEAR_CATEGORIES];
+                System.arraycopy(raw, 0, resized, 0, Math.min(raw.length, FEAR_CATEGORIES));
+                raw = resized;
+            }
+            labels = Nd4j.create(raw).reshape(1, FEAR_CATEGORIES);
+        } else {
+            labels = Nd4j.zeros(1, FEAR_CATEGORIES);
+        }
+
+        org.nd4j.linalg.dataset.DataSet ds = new org.nd4j.linalg.dataset.DataSet(features, labels);
+        network.fit(ds);
     }
 
     public FearProfile predictPlayerFears(PlayerBehaviorData data) {
@@ -53,23 +68,7 @@ public class AIFearLearner {
     }
 
     private INDArray convertBehaviorToFeatures(PlayerBehaviorData data) {
-        // Convert player behavior data into neural network input features
-        double[] features = new double[INPUT_FEATURES];
-        
-        // Normalize and add features
-        features[0] = data.getAverageMovementSpeed() / 10.0; // Normalize by a reasonable max speed
-        features[1] = data.getFleeingInstances() / 100.0; // Normalize by a reasonable count
-        features[2] = data.getJumpFrequency() / 1000.0;
-        features[3] = data.getSneakDuration() / 10000.0;
-        features[4] = data.getCombatEngagements() / 50.0;
-
-        // Example of processing map-based data
-        features[5] = data.getBlockAvoidance().values().stream().mapToInt(Integer::intValue).sum() / 1000.0;
-        features[6] = data.getEntityReactions().values().stream().mapToInt(Integer::intValue).sum() / 1000.0;
-        features[7] = data.getBiomePreferences().values().stream().mapToInt(Integer::intValue).sum() / 10000.0;
-
-        // ... fill other features up to INPUT_FEATURES
-        
-        return Nd4j.create(features).reshape(1, -1);
+        // Delegate conversion to PlayerBehaviorData so the feature mapping is centralized
+        return data.toINDArray();
     }
 }
