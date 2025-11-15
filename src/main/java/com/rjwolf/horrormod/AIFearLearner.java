@@ -14,7 +14,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 public class AIFearLearner {
     private MultiLayerNetwork network;
     private static final int INPUT_FEATURES = PlayerBehaviorData.FEATURE_COUNT; // Number of behavioral features we track
-    private static final int FEAR_CATEGORIES = 10; // Different types of fears we can identify
+    private static final int FEAR_CATEGORIES = FearProfile.FearType.values().length;
 
     public void initialize() {
         // Create a neural network configuration

@@ -38,8 +38,7 @@ public class FearProfile {
         FIRE,
         ISOLATION,
         UNDERGROUND,
-        UNKNOWN,
-        CUSTOM
+        UNKNOWN
     }
 
     public Map<FearType, Double> getAllFearLevels() {
